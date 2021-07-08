@@ -7,6 +7,7 @@ class Sandbox : public Application
 {
 public:
 	Sandbox()
+		: Application("Test")
 	{
 		PushLayer(new SandboxLayer());
 	}
