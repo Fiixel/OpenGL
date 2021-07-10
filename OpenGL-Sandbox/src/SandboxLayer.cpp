@@ -7,6 +7,8 @@ using namespace GLCore::Utils;
 SandboxLayer::SandboxLayer()
 	: m_CameraController(16.0f / 9.0f)
 {
+	printf("%s\n", m_Vendor);
+	printf("%s\n", m_GraphicsCard);
 }
 
 SandboxLayer::~SandboxLayer()
@@ -20,6 +22,8 @@ void SandboxLayer::OnAttach()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	
 
 	// Init here
 }
@@ -91,6 +95,38 @@ void SandboxLayer::OnImGuiRender()
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			// Disabling fullscreen would allow the window to be moved to the front of other windows, 
+			// which we can't undo at the moment without finer window depth/z control.
+			//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);1
+			if (ImGui::MenuItem("New", "Ctrl+N"))
+				printf("New\n");
+
+			if (ImGui::MenuItem("Open...", "Ctrl+O"))
+				printf("Open\n");
+
+			if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+				printf("Save as\n");
+
+			if (ImGui::MenuItem("Exit")) 
+				Application::Get().Close();
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::MenuItem("Computerinformation"))
+				m_showComputerinfoPopup = true;
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
 
 	auto [x, y] = WindowsInput::GetMousePosition();
 	// ImGui here
@@ -111,4 +147,28 @@ void SandboxLayer::OnImGuiRender()
 
 	ImGui::End();
 	ImGui::End();
+
+	ComputerInfoPopup();
+}
+
+void SandboxLayer::ComputerInfoPopup()
+{
+	if (m_showComputerinfoPopup)
+	{
+		ImGui::OpenPopup("Computerinformation###ComputerinfoPopup");
+		m_showComputerinfoPopup = false;
+	}
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Computerinformation###ComputerinfoPopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("%s", m_GraphicsCard);
+
+		if (ImGui::Button("OK"))
+			ImGui::CloseCurrentPopup();
+
+		ImGui::EndPopup();
+	}
 }

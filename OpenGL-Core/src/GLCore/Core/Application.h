@@ -20,6 +20,7 @@ namespace GLCore {
 		virtual ~Application() = default;
 
 		void Run();
+		void Close();
 
 		void OnEvent(Event& e);
 

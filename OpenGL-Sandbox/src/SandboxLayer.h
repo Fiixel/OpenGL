@@ -18,5 +18,12 @@ private:
 
 	GLCore::Utils::OrthographicCameraController m_CameraController;
 
-	bool m_showWindow;
+	bool m_showWindow = false;
+	bool m_showComputerinfoPopup = false;
+
+	const char* m_Vendor		= (const char*)glGetString(GL_VENDOR);
+	const char* m_GraphicsCard	= (const char*)glGetString(GL_RENDERER);
+
+	void ComputerInfoPopup();
+
 };

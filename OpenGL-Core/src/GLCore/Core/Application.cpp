@@ -82,4 +82,9 @@ namespace GLCore {
 		return true;
 	}
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 }
