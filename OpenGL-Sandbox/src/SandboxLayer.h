@@ -21,6 +21,8 @@ private:
 	bool m_showWindow = false;
 	bool m_showComputerinfoPopup = false;
 
+	ImFont* m_basicFont;
+
 	const char* m_Vendor		= (const char*)glGetString(GL_VENDOR);
 	const char* m_GraphicsCard	= (const char*)glGetString(GL_RENDERER);
 

@@ -24,7 +24,8 @@ void SandboxLayer::OnAttach()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	
-
+	ImGuiIO& io = ImGui::GetIO();
+	m_basicFont =  io.Fonts->AddFontFromFileTTF("assets/fonts/arial/arial.ttf", 16);
 	// Init here
 }
 
@@ -103,7 +104,7 @@ void SandboxLayer::OnImGuiRender()
 			// which we can't undo at the moment without finer window depth/z control.
 			//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);1
 			if (ImGui::MenuItem("New", "Ctrl+N"))
-				printf("New\n");
+				LOG_INFO("New");
 
 			if (ImGui::MenuItem("Open...", "Ctrl+O"))
 				printf("Open\n");
