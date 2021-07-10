@@ -1,6 +1,8 @@
 # Directories
 **bin/
 **bin-int/
+**OpenGL-Core/vendor/Glad/bin/
+**OpenGL-Core/vendor/Glad/bin-int/
 
 # Files
 *.user
