@@ -4,11 +4,25 @@
 using namespace GLCore;
 using namespace GLCore::Utils;
 
+namespace ImGuiUtils
+{
+	static void HelpMarker(const char* desc, const ImVec4& color = {1.0f, 1.0f, 1.0f, 1.0f})
+	{
+		ImGui::TextDisabled("(?)");
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			ImGui::TextColored(color, desc);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+		}
+	}
+}
+
 SandboxLayer::SandboxLayer()
 	: m_CameraController(16.0f / 9.0f)
 {
-	printf("%s\n", m_Vendor);
-	printf("%s\n", m_GraphicsCard);
 }
 
 SandboxLayer::~SandboxLayer()
@@ -25,9 +39,9 @@ void SandboxLayer::OnAttach()
 
 	
 	ImGuiIO& io = ImGui::GetIO();
-	m_ArialFont			= io.Fonts->AddFontFromFileTTF("assets/fonts/arial/arial.ttf", 16);
-	m_SourceCodeProFont	= io.Fonts->AddFontFromFileTTF("assets/fonts/SourceCodePro/SourceCodePro-Regular.ttf", 16);
-	m_OpenSansFont		= io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 16);
+	io.Fonts->AddFontFromFileTTF("assets/fonts/arial/arial.ttf", 16);
+	io.Fonts->AddFontFromFileTTF("assets/fonts/SourceCodePro/SourceCodePro-Regular.ttf", 16);
+	io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 16);
 	// Init here
 }
 
@@ -109,10 +123,10 @@ void SandboxLayer::OnImGuiRender()
 				LOG_INFO("New");
 
 			if (ImGui::MenuItem("Open...", "Ctrl+O"))
-				printf("Open\n");
+				LOG_INFO("Open");
 
 			if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-				printf("Save as\n");
+				LOG_INFO("Save as");
 
 			if (ImGui::MenuItem("Exit")) 
 				Application::Get().Close();
@@ -182,9 +196,10 @@ void SandboxLayer::ComputerInfoPopup()
 
 	if (ImGui::BeginPopupModal("Computerinformation###ComputerinfoPopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::Text("%s", m_GraphicsCard);
+		ImGui::Text("GPU: %s", m_GraphicsCard);
+		ImGui::Text("Vendor: %s", m_Vendor);
 
-		if (ImGui::Button("OK"))
+		if (ImGui::Button("Close"))
 			ImGui::CloseCurrentPopup();
 
 		ImGui::EndPopup();
@@ -195,67 +210,37 @@ void SandboxLayer::FontPopup()
 {
 	if (m_showFontPopup)
 	{
-		ImGui::OpenPopup("Font###Fontpopup");
+		ImGui::OpenPopup("Fonts###Fontpopup");
 		m_showFontPopup = false;
 	}
 
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-	if (ImGui::BeginPopupModal("Font###Fontpopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal("Fonts###Fontpopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::Text("Warning: A few fonts look like they are note meant for the program.");
-		/*
-		const char* items[3] = { "Arial", "SourceCodePro", "OpenSans" };
-		static const char* item_current = items[0];
-
-		if (ImGui::BeginCombo("Fonts", item_current))
+		// From ImGui::ShowFontSelector
+		// Maybe should take a better look at this
+		ImGuiIO& io = ImGui::GetIO();
+		ImFont* font_current = ImGui::GetFont();
+		if (ImGui::BeginCombo("Font", font_current->GetDebugName()))
 		{
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			for (int n = 0; n < io.Fonts->Fonts.Size; n++)
 			{
-				bool is_selected = (item_current == items[n]);
-
-				if (ImGui::Selectable(items[n], is_selected))
-				{
-					item_current = items[n];
-					//LoadFont(item_current);
-					printf("%s: %d\n", item_current, *item_current);
-				}
-
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+				ImFont* font = io.Fonts->Fonts[n];
+				ImGui::PushID((void*)font);
+				if (ImGui::Selectable(font->GetDebugName(), font == font_current))
+					io.FontDefault = font;
+				ImGui::PopID();
 			}
 			ImGui::EndCombo();
 		}
-		*/
+		ImGui::SameLine();
+		ImGuiUtils::HelpMarker("Warning: Some fonts may look weird!", { 1.0f, 0.0f, 0.0f, 1.0f });
 
-		ImGui::ShowFontSelector("");
-
-		if (ImGui::Button("OK"))
+		if (ImGui::Button("Close"))
 			ImGui::CloseCurrentPopup();
 
 		ImGui::EndPopup();
-	}
-}
-
-void SandboxLayer::LoadFont(FontType type)
-{
-	ImGuiIO& io = ImGui::GetIO();
-
-	const char* fonts[3] = { "assets/fonts/arial/arial.ttf", "assets/fonts/opensans/OpenSans-Regular.ttf", "assets/fonts/SourceCodePro/SourceCodePro-Regular.ttf" };
-
-	switch (type)
-	{
-	case FontType::Arial:
-		m_currentFont = io.Fonts->AddFontFromFileTTF(fonts[0], 16);
-		break;
-
-	case FontType::OpenSans:
-		m_currentFont = io.Fonts->AddFontFromFileTTF(fonts[1], 16);
-		break;
-
-	case FontType::SourceCodePro:
-		m_currentFont = io.Fonts->AddFontFromFileTTF(fonts[2], 16);
-		break;
 	}
 }
