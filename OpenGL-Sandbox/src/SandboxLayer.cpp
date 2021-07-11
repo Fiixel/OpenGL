@@ -25,7 +25,9 @@ void SandboxLayer::OnAttach()
 
 	
 	ImGuiIO& io = ImGui::GetIO();
-	m_basicFont =  io.Fonts->AddFontFromFileTTF("assets/fonts/arial/arial.ttf", 16);
+	m_ArialFont			= io.Fonts->AddFontFromFileTTF("assets/fonts/arial/arial.ttf", 16);
+	m_SourceCodeProFont	= io.Fonts->AddFontFromFileTTF("assets/fonts/SourceCodePro/SourceCodePro-Regular.ttf", 16);
+	m_OpenSansFont		= io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 16);
 	// Init here
 }
 
@@ -118,6 +120,17 @@ void SandboxLayer::OnImGuiRender()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Demo Window"))
+				m_showDemoWindow = m_showDemoWindow ? false : true;
+
+			if (ImGui::MenuItem("Font"))
+				m_showFontPopup = true;;
+
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("Help"))
 		{
 			if (ImGui::MenuItem("Computerinformation"))
@@ -144,12 +157,16 @@ void SandboxLayer::OnImGuiRender()
 
 		ImGui::End();
 	}
+
+	if (m_showDemoWindow)
+		ImGui::ShowDemoWindow();
 		
 
 	ImGui::End();
 	ImGui::End();
 
 	ComputerInfoPopup();
+	FontPopup();
 }
 
 void SandboxLayer::ComputerInfoPopup()
@@ -171,5 +188,74 @@ void SandboxLayer::ComputerInfoPopup()
 			ImGui::CloseCurrentPopup();
 
 		ImGui::EndPopup();
+	}
+}
+
+void SandboxLayer::FontPopup()
+{
+	if (m_showFontPopup)
+	{
+		ImGui::OpenPopup("Font###Fontpopup");
+		m_showFontPopup = false;
+	}
+
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+	if (ImGui::BeginPopupModal("Font###Fontpopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Warning: A few fonts look like they are note meant for the program.");
+		/*
+		const char* items[3] = { "Arial", "SourceCodePro", "OpenSans" };
+		static const char* item_current = items[0];
+
+		if (ImGui::BeginCombo("Fonts", item_current))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+			{
+				bool is_selected = (item_current == items[n]);
+
+				if (ImGui::Selectable(items[n], is_selected))
+				{
+					item_current = items[n];
+					//LoadFont(item_current);
+					printf("%s: %d\n", item_current, *item_current);
+				}
+
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+			}
+			ImGui::EndCombo();
+		}
+		*/
+
+		ImGui::ShowFontSelector("");
+
+		if (ImGui::Button("OK"))
+			ImGui::CloseCurrentPopup();
+
+		ImGui::EndPopup();
+	}
+}
+
+void SandboxLayer::LoadFont(FontType type)
+{
+	ImGuiIO& io = ImGui::GetIO();
+
+	const char* fonts[3] = { "assets/fonts/arial/arial.ttf", "assets/fonts/opensans/OpenSans-Regular.ttf", "assets/fonts/SourceCodePro/SourceCodePro-Regular.ttf" };
+
+	switch (type)
+	{
+	case FontType::Arial:
+		m_currentFont = io.Fonts->AddFontFromFileTTF(fonts[0], 16);
+		break;
+
+	case FontType::OpenSans:
+		m_currentFont = io.Fonts->AddFontFromFileTTF(fonts[1], 16);
+		break;
+
+	case FontType::SourceCodePro:
+		m_currentFont = io.Fonts->AddFontFromFileTTF(fonts[2], 16);
+		break;
 	}
 }

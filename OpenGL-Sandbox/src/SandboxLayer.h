@@ -3,6 +3,11 @@
 #include <GLCore.h>
 #include <GLCoreUtils.h>
 
+enum class FontType
+{
+	Arial = 0, SourceCodePro, OpenSans
+};
+
 class SandboxLayer : public GLCore::Layer
 {
 public:
@@ -20,12 +25,20 @@ private:
 
 	bool m_showWindow = false;
 	bool m_showComputerinfoPopup = false;
+	bool m_showDemoWindow = false;
+	bool m_showFontPopup = false;
 
-	ImFont* m_basicFont;
+	ImFont* m_currentFont;
+	ImFont* m_ArialFont;
+	ImFont* m_OpenSansFont;
+	ImFont* m_SourceCodeProFont;
 
 	const char* m_Vendor		= (const char*)glGetString(GL_VENDOR);
 	const char* m_GraphicsCard	= (const char*)glGetString(GL_RENDERER);
 
 	void ComputerInfoPopup();
+	void FontPopup();
+
+	void LoadFont(FontType type);
 
 };
