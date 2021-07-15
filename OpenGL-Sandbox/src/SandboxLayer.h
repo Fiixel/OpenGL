@@ -31,4 +31,5 @@ private:
 	void ComputerInfoPopup();
 	void FontPopup();
 
+	void SetDarkThemeColor();
 };
