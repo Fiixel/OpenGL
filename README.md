@@ -2,6 +2,7 @@
 Most of this code was written by TheCherno. I use this fork to test things with ImGui.
 
 !!! You need to download the the docking branch from ImGui with version < 1.84 yourself and replace the files in OpenGL-Core/vendor/imgui with the new one.
+
 !!! You also need to change the "files" section from OpenGL-Core/vendor/imgui/premake5.lua to include "imgui_tables.cpp"
 
 # OpenGL-Core
