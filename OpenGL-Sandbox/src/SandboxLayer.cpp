@@ -144,6 +144,9 @@ void SandboxLayer::OnImGuiRender()
 			if (ImGui::MenuItem("Font"))
 				m_showFontPopup = true;;
 
+			if (ImGui::MenuItem("Write Image"))
+				ImageWriteTest(128, 128, 3);
+
 			ImGui::EndMenu();
 		}
 
@@ -316,8 +319,29 @@ void printQr(const qrcodegen::QrCode& qr) {
 void SandboxLayer::BasicQRDemo()
 {
 	const char* text = "Hello, world!";
-	const qrcodegen::QrCode::Ecc errCorLv1 = qrcodegen::QrCode::Ecc::HIGH;
+	const qrcodegen::QrCode::Ecc errCorLv1 = qrcodegen::QrCode::Ecc::MEDIUM;
 
 	const qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(text, errCorLv1);
 	printQr(qr);
+}
+
+void SandboxLayer::ImageWriteTest(unsigned char w, unsigned char h, unsigned char channels_num)
+{
+	unsigned char *data = new unsigned char[w * h * channels_num];
+
+	int index = 0;
+	for (int j = h - 1; j >= 0; --j)
+	{
+		for (int i = 0; i < w; ++i)
+		{
+			data[index++] = (unsigned char)(255.0 * i / w);
+			data[index++] = (unsigned char)(255.0 * j / h);
+			data[index++] = (unsigned char)(255.0 * 0.2);
+		}
+	}
+
+	stbi_write_jpg("jpg_test.jpg", w, h, channels_num, data, w * channels_num);
+
+	LOG_INFO("Wrote Image");
+	delete[] data;
 }

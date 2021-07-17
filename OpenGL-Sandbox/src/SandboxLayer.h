@@ -4,6 +4,7 @@
 #include <GLCoreUtils.h>
 
 #include "../vendor/QRCode/QrCode.hpp"
+#include "../vendor/stb/stb_image_write.h"
 
 class SandboxLayer : public GLCore::Layer
 {
@@ -36,4 +37,6 @@ private:
 	void SetDarkThemeColor();
 
 	void BasicQRDemo();
+
+	void ImageWriteTest(unsigned char w, unsigned char h, unsigned char channels_num);
 };
