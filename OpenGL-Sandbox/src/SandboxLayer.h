@@ -3,6 +3,8 @@
 #include <GLCore.h>
 #include <GLCoreUtils.h>
 
+#include "../vendor/QRCode/QrCode.hpp"
+
 class SandboxLayer : public GLCore::Layer
 {
 public:
@@ -32,4 +34,6 @@ private:
 	void FontPopup();
 
 	void SetDarkThemeColor();
+
+	void BasicQRDemo();
 };

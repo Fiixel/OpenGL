@@ -1,4 +1,4 @@
-#include "SandboxLayer.h"
+﻿#include "SandboxLayer.h"
 #include "Platform/Windows/WindowsInput.h"
 
 using namespace GLCore;
@@ -165,7 +165,8 @@ void SandboxLayer::OnImGuiRender()
 	ImGui::Text("Mouse Position: %f, %f", x, y);
 	ImGui::SameLine();
 	if (ImGui::Button("Test"))
-		m_showWindow = m_showWindow ? false : true;
+		BasicQRDemo();
+		//m_showWindow = m_showWindow ? false : true;
 
 	if (m_showWindow)
 	{
@@ -297,4 +298,26 @@ void SandboxLayer::SetDarkThemeColor()
 	// Slider
 	colors[ImGuiCol_SliderGrab] = ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
 	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
+}
+
+
+// Prints the given QrCode object to the console.
+void printQr(const qrcodegen::QrCode& qr) {
+	int border = 4;
+	for (int y = -border; y < qr.getSize() + border; y++) {
+		for (int x = -border; x < qr.getSize() + border; x++) {
+			std::cout << (qr.getModule(x, y) ? "##" : "  ");
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+void SandboxLayer::BasicQRDemo()
+{
+	const char* text = "Hello, world!";
+	const qrcodegen::QrCode::Ecc errCorLv1 = qrcodegen::QrCode::Ecc::HIGH;
+
+	const qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(text, errCorLv1);
+	printQr(qr);
 }
