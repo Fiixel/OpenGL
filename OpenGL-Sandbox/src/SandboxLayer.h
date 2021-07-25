@@ -5,6 +5,8 @@
 
 #include "../vendor/QRCode/QrCode.hpp"
 #include "../vendor/stb/stb_image_write.h"
+#include "../vendor/qrtopng/QrToPng.h"
+#include "../stb_image/stb_image.h"
 
 class SandboxLayer : public GLCore::Layer
 {
@@ -31,12 +33,18 @@ private:
 	const char* m_Vendor		= (const char*)glGetString(GL_VENDOR);
 	const char* m_GraphicsCard	= (const char*)glGetString(GL_RENDERER);
 
+	int my_image_width, my_image_height = 0;
+	GLuint my_image_texture = 0;
+	bool ret = false;
+
 	void ComputerInfoPopup();
 	void FontPopup();
-
+	void QRWindow();
 	void SetDarkThemeColor();
 
 	void BasicQRDemo();
-
 	void ImageWriteTest(unsigned char w, unsigned char h, unsigned char channels_num);
+	void QRImageWriteTest();
+
+	bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height);
 };
