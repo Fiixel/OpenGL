@@ -119,6 +119,8 @@ void SandboxLayer::OnImGuiRender()
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
+	// To get a MenuItem with a checkbox you need to pass a bool to it 
+
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -161,22 +163,17 @@ void SandboxLayer::OnImGuiRender()
 			if (ImGui::MenuItem("Computerinformation"))
 				m_showComputerinfoPopup = true;
 
+			// temporary
+			ImGui::MenuItem("Check test", NULL, &test);
+
 			ImGui::EndMenu();
 		}
 
 		ImGui::EndMenuBar();
 	}
 
-	auto [x, y] = WindowsInput::GetMousePosition();
-	// ImGui here
 	ImGui::Begin("Test");
-
-	ImGui::Text("Mouse Position: %f, %f", x, y);
-	ImGui::SameLine();
-	if (ImGui::Button("Test"))
-		m_showWindow = m_showWindow ? false : true;
-		//BasicQRDemo();
-		
+	ImGui::Checkbox("Show QR Code", &m_showWindow);
 
 	if (m_showWindow)
 	{
@@ -314,8 +311,8 @@ void SandboxLayer::SetDarkThemeColor()
 	colors[ImGuiCol_CheckMark] = ImVec4(0.94f, 0.94f, 0.94f, 1.0f);
 
 	// Slider
-	colors[ImGuiCol_SliderGrab] = ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
-	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
+	colors[ImGuiCol_SliderGrab] = ImVec4(0.94f, 0.94f, 0.94f, 0.5f);
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.94f, 0.94f, 0.94f, 0.25f);
 }
 
 
@@ -381,6 +378,7 @@ void SandboxLayer::QRImageWriteTest()
 
 bool SandboxLayer::LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
 {
+	m_Timer.Reset();
 	// Load from file
 	int image_width = 0;
 	int image_height = 0;
@@ -409,6 +407,8 @@ bool SandboxLayer::LoadTextureFromFile(const char* filename, GLuint* out_texture
 	*out_texture = image_texture;
 	*out_width = image_width;
 	*out_height = image_height;
+
+	LOG_INFO("Needed {0} ms to load image", m_Timer.ElapsedTimeinMillis());
 
 	return true;
 }

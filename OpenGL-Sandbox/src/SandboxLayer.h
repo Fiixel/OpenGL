@@ -3,6 +3,8 @@
 #include <GLCore.h>
 #include <GLCoreUtils.h>
 
+#include "Util/Timer.h"
+
 #include "../vendor/QRCode/QrCode.hpp"
 #include "../vendor/stb/stb_image_write.h"
 #include "../vendor/qrtopng/QrToPng.h"
@@ -19,14 +21,18 @@ public:
 	virtual void OnEvent(GLCore::Event& event) override;
 	virtual void OnUpdate(GLCore::Timestep ts) override;
 	virtual void OnImGuiRender() override;
+
 private:
 
 	GLCore::Utils::OrthographicCameraController m_CameraController;
+	Timer m_Timer;
 
 	bool m_showWindow = false;
 	bool m_showComputerinfoPopup = false;
 	bool m_showDemoWindow = false;
 	bool m_showFontPopup = false;
+
+	bool test = false;
 
 	ImFont* m_currentFont;
 
@@ -37,6 +43,7 @@ private:
 	GLuint my_image_texture = 0;
 	bool ret = false;
 
+private:
 	void ComputerInfoPopup();
 	void FontPopup();
 	void QRWindow();
