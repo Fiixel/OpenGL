@@ -45,9 +45,7 @@ void SandboxLayer::OnAttach()
 
 	SetDarkThemeColor();
 
-	my_image_width = 0;
-	my_image_height = 0;
-	my_image_texture = 0;
+	my_image_width, my_image_height, my_image_texture = 0;
 	ret = LoadTextureFromFile("qrcode.png", &my_image_texture, &my_image_width, &my_image_height);
 	// Init here
 }
@@ -260,6 +258,10 @@ void SandboxLayer::QRWindow()
 	ImGui::Text("pointer = %p", my_image_texture);
 	ImGui::Text("size = %d x %d", my_image_width, my_image_height);
 	ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
+	ImGui::InputTextWithHint("##QRCodeText", "Text to encode", m_QRWordBuffer, IM_ARRAYSIZE(m_QRWordBuffer));
+	ImGui::SameLine();
+	if (ImGui::Button("Generate QR Code"))
+		GenerateQRCode();
 	ImGui::End();
 }
 
@@ -313,6 +315,29 @@ void SandboxLayer::SetDarkThemeColor()
 	// Slider
 	colors[ImGuiCol_SliderGrab] = ImVec4(0.94f, 0.94f, 0.94f, 0.5f);
 	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.94f, 0.94f, 0.94f, 0.25f);
+}
+
+void SandboxLayer::GenerateQRCode()
+{
+	std::string filename = "qrcode.png";
+
+	int imgSize = 300;
+	int minModulePixelSize = 3;
+
+	m_Timer.Reset();
+	QrToPng exampleQrPng1 = QrToPng(filename, imgSize, minModulePixelSize, m_QRWordBuffer, true, qrcodegen::QrCode::Ecc::MEDIUM);
+	float time = m_Timer.ElapsedTimeinMillis();
+	LOG_INFO("It took {0} ms to write the image", time);
+
+	std::cout << "Writing Example QR code 1 (normal) to " << filename << " with text: '" << m_QRWordBuffer << "', size: " <<
+		imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << "." << std::endl;
+
+	if (exampleQrPng1.writeToPNG())
+		std::cout << "Success!" << std::endl;
+	else
+		std::cerr << "Failure..." << std::endl;
+
+	ret = LoadTextureFromFile("qrcode.png", &my_image_texture, &my_image_width, &my_image_height);
 }
 
 

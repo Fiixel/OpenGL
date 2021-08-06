@@ -38,6 +38,7 @@ private:
 
 	const char* m_Vendor		= (const char*)glGetString(GL_VENDOR);
 	const char* m_GraphicsCard	= (const char*)glGetString(GL_RENDERER);
+	char m_QRWordBuffer[256] = "";
 
 	int my_image_width, my_image_height = 0;
 	GLuint my_image_texture = 0;
@@ -48,6 +49,7 @@ private:
 	void FontPopup();
 	void QRWindow();
 	void SetDarkThemeColor();
+	void GenerateQRCode();
 
 	void BasicQRDemo();
 	void ImageWriteTest(unsigned char w, unsigned char h, unsigned char channels_num);
