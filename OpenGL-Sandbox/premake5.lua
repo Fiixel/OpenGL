@@ -10,7 +10,10 @@ project "OpenGL-Sandbox"
 	files
 	{
 		"src/**.h",
-		"src/**.cpp"
+		"src/**.cpp",
+		"vendor/**.h",
+		"vendor/**.hpp",
+		"vendor/**.cpp"
 	}
 
 	includedirs
