@@ -50,10 +50,4 @@ private:
 	void QRWindow();
 	void SetDarkThemeColor();
 	void GenerateQRCode();
-
-	void BasicQRDemo();
-	void ImageWriteTest(unsigned char w, unsigned char h, unsigned char channels_num);
-	void QRImageWriteTest();
-
-	bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height);
 };
