@@ -39,8 +39,9 @@ private:
 	const char* m_Vendor		= (const char*)glGetString(GL_VENDOR);
 	const char* m_GraphicsCard	= (const char*)glGetString(GL_RENDERER);
 	char m_QRWordBuffer[256] = "";
+	char m_ImageSizeBuffer[5] = "300";
 
-	int my_image_width, my_image_height = 0;
+	int my_image_width = 0, my_image_height = 0;
 	GLuint my_image_texture = 0;
 	bool ret = false;
 

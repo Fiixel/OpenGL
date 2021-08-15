@@ -4,6 +4,8 @@
 #include "../vendor/stb_image/stb_image.h"
 #include "../../vendor/qrtopng/QrToPng.h"
 
+#include <memory>
+
 bool SandboxUtils::LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
 {
 	// Load from file
@@ -49,7 +51,7 @@ void SandboxUtils::BasicQRDemo()
 
 void SandboxUtils::ImageWriteTest(unsigned char w, unsigned char h, unsigned char channels_num)
 {
-	unsigned char* data = new unsigned char[w * h * channels_num];
+	auto data = std::make_unique<unsigned char[]>(w * h * channels_num);
 
 	int index = 0;
 	for (int j = h - 1; j >= 0; --j)
@@ -62,10 +64,12 @@ void SandboxUtils::ImageWriteTest(unsigned char w, unsigned char h, unsigned cha
 		}
 	}
 
-	stbi_write_jpg("jpg_test.jpg", w, h, channels_num, data, w * channels_num);
+	{
+		unsigned char* tmpdata = data.get();
+		stbi_write_jpg("jpg_test.jpg", w, h, channels_num, tmpdata, w * channels_num);
+	}
 
 	LOG_INFO("Wrote Image");
-	delete[] data;
 }
 
 void SandboxUtils::QRImageWriteTest()

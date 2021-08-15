@@ -2,6 +2,8 @@
 #include "Platform/Windows/WindowsInput.h"
 #include "../src/Util/SandboxUtils.h"
 
+#include "imgui/imgui_widgets.cpp";
+
 using namespace GLCore;
 using namespace GLCore::Utils;
 
@@ -152,7 +154,7 @@ void SandboxLayer::OnImGuiRender()
 
 			if (ImGui::MenuItem("Write Image"))
 				SandboxUtils::QRImageWriteTest();
-				//ImageWriteTest(128, 128, 3);
+				//SandboxUtils::ImageWriteTest(128, 128, 3);
 
 			ImGui::EndMenu();
 		}
@@ -254,21 +256,48 @@ void SandboxLayer::FontPopup()
 
 void SandboxLayer::QRWindow()
 {
-	IM_ASSERT(ret);
+	ImVec2 inputboxsize{ 50, 0 };
+	ImGuiInputTextFlags inputflags = ImGuiInputTextFlags_CallbackCharFilter;
+
+	struct TextFilters
+	{
+		// Return 0 (pass) if the character is "0123456789"
+		static int InputOnlyNumbersFilter(ImGuiInputTextCallbackData* data)
+		{
+			if (data->EventChar < 256 && strchr("0123456789", (char)data->EventChar))
+				return 0;
+			return 1;
+		}
+	};
+
 	ImGui::Begin("OpenGL Texture Text");
-	ImGui::Text("pointer = %p", my_image_texture);
-	ImGui::Text("size = %d x %d", my_image_width, my_image_height);
-	ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
+
+	if (ret)
+	{
+		ImGui::Text("pointer = %p", my_image_texture);
+		ImGui::Text("size = %d x %d", my_image_width, my_image_height);
+		ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
+	}
+	else
+	{
+		ImGui::Text("No image found!");
+	}
+	
+	ImGui::Separator();
 	ImGui::InputTextWithHint("##QRCodeText", "Text to encode", m_QRWordBuffer, IM_ARRAYSIZE(m_QRWordBuffer));
-	ImGui::SameLine();
+
+	// We need to use InputTextEx here if we want to have hints and are able to change the width and height of the InputBox
+	ImGui::InputTextEx("width & height of the QR code", "", m_ImageSizeBuffer, IM_ARRAYSIZE(m_ImageSizeBuffer), inputboxsize, inputflags, TextFilters::InputOnlyNumbersFilter);
+
 	if (ImGui::Button("Generate QR Code"))
 		GenerateQRCode();
+		
 	ImGui::End();
 }
 
 void SandboxLayer::SetDarkThemeColor()
 {
-	// Taken from the Hazel-dev made by TheCherno
+	// Taken from the Hazel-dev repo made by TheCherno
 	auto& colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
 
@@ -322,19 +351,21 @@ void SandboxLayer::GenerateQRCode()
 {
 	std::string filename = "qrcode.png";
 
-	int imgSize = 300;
+	int imgSize = atoi(m_ImageSizeBuffer);
 	int minModulePixelSize = 3;
 
-	m_Timer.Reset();
 	QrToPng exampleQrPng1 = QrToPng(filename, imgSize, minModulePixelSize, m_QRWordBuffer, true, qrcodegen::QrCode::Ecc::MEDIUM);
-	float time = m_Timer.ElapsedTimeinMillis();
-	LOG_INFO("It took {0} ms to write the image", time);
 
 	std::cout << "Writing Example QR code 1 (normal) to " << filename << " with text: '" << m_QRWordBuffer << "', size: " <<
-		imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << "." << std::endl;
+		imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << std::endl;
 
+	m_Timer.Reset();
 	if (exampleQrPng1.writeToPNG())
+	{
+		float time = m_Timer.ElapsedTimeinMillis();
+		LOG_WARN("It took {0} ms to write the image", time);
 		std::cout << "Success!" << std::endl;
+	}
 	else
 		std::cerr << "Failure..." << std::endl;
 
