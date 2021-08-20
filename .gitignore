@@ -7,8 +7,8 @@
 # Files
 *.user
 *imgui.ini
-*.pdb
-*.lib
+**.pdb
+**.lib
 
 # Visual Studio
 .vs/
