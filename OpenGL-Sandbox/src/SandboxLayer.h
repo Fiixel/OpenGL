@@ -50,5 +50,6 @@ private:
 	void FontPopup();
 	void QRWindow();
 	void SetDarkThemeColor();
+	void SetDarkThemeColorV2();
 	void GenerateQRCode();
 };
